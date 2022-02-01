@@ -3,6 +3,7 @@ import {
   deleteTask,
   getVehicles,
   getAllUsers,
+  getAllDetails,
   saveTask,
   getTask,
   updateTask,
@@ -50,6 +51,15 @@ router.get("/vehiculos", getVehicles);
  *    tags: [Tasks]
  */
  router.get("/users", getAllUsers);
+
+ /**
+ * @swagger
+ * /tasks:
+ *  get:
+ *    summary: Get all Tasks
+ *    tags: [Tasks]
+ */
+  router.get("/details", getAllDetails);
 
 
 /**

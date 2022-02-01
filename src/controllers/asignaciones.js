@@ -12,6 +12,12 @@ export const getAllUsers = async (req, res) => {
   res.json(rows);
 };
 
+export const getAllDetails = async (req, res) => {
+  const connection = await connectrvseguridad();
+  const [rows] = await connection.execute("SELECT * FROM gruporecurso AS A JOIN opcionrecurso AS B ON A.IdGrupoRecurso = B.IdGrupoRecurso WHERE A.Estatus = 1 AND B.Estatus = 1");
+  res.json(rows);
+};
+
 export const saveTask = async (req, res) => {
   try {
     const connection = await connect();

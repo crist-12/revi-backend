@@ -1,4 +1,4 @@
-@api = http://localhost:3000/users
+@api = http://localhost:3000/details
 
 ### Get all tasks
 {{api}}
