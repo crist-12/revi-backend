@@ -1,8 +1,14 @@
 import { connectrvfleet, connectrvseguridad } from "../database";
 
-export const getTasks = async (req, res) => {
+export const getVehicles = async (req, res) => {
   const connection = await connectrvfleet();
   const [rows] = await connection.execute("SELECT * FROM vehiculos");
+  res.json(rows);
+};
+
+export const getAllUsers = async (req, res) => {
+  const connection = await connectrvseguridad();
+  const [rows] = await connection.execute("SELECT A.IdUsuario, A.NombreUsuario, b.NombreUbicacion FROM usuario AS A JOIN ubicacion AS B ON A.IdUbicacion = B.IdUbicacion");
   res.json(rows);
 };
 

@@ -1,7 +1,8 @@
 import { Router } from "express";
 import {
   deleteTask,
-  getTasks,
+  getVehicles,
+  getAllUsers,
   saveTask,
   getTask,
   updateTask,
@@ -33,12 +34,23 @@ const router = Router();
 
 /**
  * @swagger
+ * /vehiculos:
+ *  get:
+ *    summary: Obtiene los registros de todos los vehículos
+ *    description: Obtiene un listado de los vehiculos registrados en la base de datos
+ *    tags: [Vehiculos]
+ */
+router.get("/vehiculos", getVehicles);
+
+/**
+ * @swagger
  * /tasks:
  *  get:
  *    summary: Get all Tasks
  *    tags: [Tasks]
  */
-router.get("/vehiculos", getTasks);
+ router.get("/users", getAllUsers);
+
 
 /**
  * @swagger
