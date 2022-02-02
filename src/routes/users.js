@@ -4,6 +4,8 @@ import {
   getVehicles,
   getAllUsers,
   getAllDetails,
+  getVehicleById,
+  getConductor,
   saveTask,
   getTask,
   updateTask,
@@ -45,6 +47,16 @@ router.get("/vehiculos", getVehicles);
 
 /**
  * @swagger
+ * /vehiculos:
+ *  get:
+ *    summary: Obtiene los registros de todos los vehículos
+ *    description: Obtiene un listado de los vehiculos registrados en la base de datos
+ *    tags: [Vehiculos]
+ */
+ router.get("/vehiculos/id=:id", getVehicleById);
+
+/**
+ * @swagger
  * /tasks:
  *  get:
  *    summary: Get all Tasks
@@ -60,6 +72,16 @@ router.get("/vehiculos", getVehicles);
  *    tags: [Tasks]
  */
   router.get("/details", getAllDetails);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *  get:
+ *    summary: Seleccionar los datos de un determinado usuario
+ *    tags: [Tasks]
+ */
+ router.get("/users/id=:id", getConductor);
+
 
 
 /**
