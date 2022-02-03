@@ -9,7 +9,8 @@ import {
   saveTask,
   getTask,
   updateTask,
-  getTasksCount,
+  doesAssignmentExist,
+  getGroupsAndOptions
 } from "../controllers/asignaciones";
 
 const router = Router();
@@ -53,7 +54,32 @@ router.get("/vehiculos", getVehicles);
  *    description: Obtiene un listado de los vehiculos registrados en la base de datos
  *    tags: [Vehiculos]
  */
+ router.get("/groups", getGroupsAndOptions);
+
+/**
+ * @swagger
+ * /vehiculos:
+ *  get:
+ *    summary: Obtiene los registros de todos los vehículos
+ *    description: Obtiene un listado de los vehiculos registrados en la base de datos
+ *    tags: [Vehiculos]
+ */
  router.get("/vehiculos/id=:id", getVehicleById);
+
+
+ /**
+ * @swagger
+ * /vehiculos:
+ *  get:
+ *    summary: Obtiene los registros de todos los vehículos
+ *    description: Obtiene un listado de los vehiculos registrados en la base de datos
+ *    tags: [Vehiculos]
+ */
+  router.get("/vehiculos/userId=:userId&vehCode=:vehCode", doesAssignmentExist);
+
+
+
+
 
 /**
  * @swagger
@@ -82,16 +108,6 @@ router.get("/vehiculos", getVehicles);
  */
  router.get("/users/id=:id", getConductor);
 
-
-
-/**
- * @swagger
- * /tasks/count:
- *  get:
- *    summary: get total tasks counter
- *    tags: [Tasks]
- */
-router.get("/tasks/count", getTasksCount);
 
 /**
  * @swagger

@@ -1,4 +1,4 @@
-@api = http://localhost:3000/vehiculos/id=1
+@api = http://localhost:3000/groups
 
 ### Get all tasks
 {{api}}
