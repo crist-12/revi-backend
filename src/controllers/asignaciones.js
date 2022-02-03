@@ -47,7 +47,7 @@ export const getGroupsAndOptions = async(req, res) => {
   let arre = []
   const connection = await connectrvseguridad();
   const [groups] = await connection.execute("SELECT IdGrupoRecurso FROM gruporecurso WHERE IdGrupoRecurso IN ('ASI_DET_EXTERIOR', 'ASI_DET_INTERIOR', 'ASI_DET_MOTOR', 'ASI_DET_CARROCERIA') AND Estatus = 1");
-  const [rows] = await connection.execute("SELECT A.IdGrupoRecurso, B.IdOpcionRecurso, A.NombreGrupoRecurso,  B.NombreOpcionRecurso FROM gruporecurso AS A JOIN opcionrecurso AS B ON A.IdGrupoRecurso = B.IdGrupoRecurso WHERE B.IdGrupoRecurso IN ('ASI_DET_EXTERIOR', 'ASI_DET_INTERIOR', 'ASI_DET_MOTOR', 'ASI_DET_CARROCERIA') AND B.Estatus = 1");
+  const [rows] = await connection.execute("SELECT A.IdGrupoRecurso, B.IdOpcionRecurso, A.NombreGrupoRecurso,  B.NombreOpcionRecurso FROM gruporecurso AS A JOIN opcionrecurso AS B ON A.IdGrupoRecurso = B.IdGrupoRecurso WHERE B.IdGrupoRecurso IN ('ASI_DET_EXTERIOR', 'ASI_DET_INTERIOR', 'ASI_DET_MOTOR', 'ASI_DET_CARROCERIA') AND B.Estatus = 1 ORDER BY IdGrupoRecurso, CAST(IdOpcionRecurso AS SIGNED) ASC");
   groups.forEach((element)=> {
     var obj = {
       IdGrupoRecurso : "",
@@ -64,6 +64,7 @@ export const getGroupsAndOptions = async(req, res) => {
   arre.forEach(item => {
     console.log(item.opciones)
   })
+  res.json(arre);
 }
 
 

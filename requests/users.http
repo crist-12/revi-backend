@@ -29,3 +29,8 @@ Content-Type: application/json
   "title": "some new title 5 edited",
   "description": "some new description 5 edit"
 }
+
+
+//SELECT IF(MAX(IdAsignacion), MAX(IdAsignacion), 0) AS 'Cantidad' FROM asignacionvehiculorespuesta WHERE CodigoVehiculo = 1
+
+// Revisar libreria react-usestateref
