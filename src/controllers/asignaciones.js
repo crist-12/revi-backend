@@ -87,6 +87,24 @@ export const saveTask = async (req, res) => {
   }
 };
 
+export const saveAssignment = async(req, res) => {
+  try {
+    const connection = await connectrvfleet();
+    const [results] = await connection.execute(
+      "INSERT INTO asignacionvehiculorespuesta(CodigoUsuario, CodigoVehiculo, KilometrajeRecibido, ProximoCambio, TanqueCombustible, ObservacionesTanqueCombustible) VALUES (?, ?, ?, ?, ?, ?)",
+      [req.body.CodigoUsuario, req.body.CodigoVehiculo, req.body.KilometrajeRecibido, req.body.ProximoCambio, req.body.TanqueCombustible, req.body.ObservacionesTanqueCombustible]
+    );
+
+    const newUser = {
+      id: results.insertId,
+      ...req.body,
+    };
+    res.json(newUser);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export const getTask = async (req, res) => {
   const connection = await connect();
   const rows = await connection.execute("SELECT * FROM tasks WHERE id = ?", [

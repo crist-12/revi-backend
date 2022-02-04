@@ -2,15 +2,16 @@ import { Router } from "express";
 import {
   deleteTask,
   getVehicles,
-  getAllUsers,
-  getAllDetails,
-  getVehicleById,
-  getConductor,
+  saveAssignment,
   saveTask,
   getTask,
   updateTask,
   doesAssignmentExist,
-  getGroupsAndOptions
+  getGroupsAndOptions,
+  getVehicleById,
+  getAllUsers,
+  getAllDetails,
+  getConductor
 } from "../controllers/asignaciones";
 
 const router = Router();
@@ -117,6 +118,15 @@ router.get("/vehiculos", getVehicles);
  *    tags: [Tasks]
  */
 router.post("/tasks", saveTask);
+
+/**
+ * @swagger
+ * /tasks:
+ *  post:
+ *    summary: save a new Task
+ *    tags: [Tasks]
+ */
+ router.post("/assignment", saveAssignment);
 
 /**
  * @swagger

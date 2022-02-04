@@ -8,8 +8,12 @@ POST {{api}}
 Content-Type: application/json
 
 {
-  "title": "my third task",
-  "description": "some third task"
+  "CodigoUsuario": "w.sabillon",
+  "CodigoVehiculo": 1,
+  "KilometrajeRecibido": 10000,
+  "ProximoCambio": "Prueba",
+  "TanqueCombustible": "1/2",
+  "ObservacionesTanqueCombustible" : "Ninguna observacion"
 }
 
 ### get a single task
