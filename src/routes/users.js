@@ -11,10 +11,26 @@ import {
   getVehicleById,
   getAllUsers,
   getAllDetails,
-  getConductor
+  getConductor,
+  saveImages,
+  saveImages2
 } from "../controllers/asignaciones";
+import multer from "multer";
+
+
 
 const router = Router();
+
+const fileStorageEngine = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, 'temp')
+  },
+  filename: (req, file, cb)=> {
+      cb(null, Date.now() + '-' + file.originalname)
+  }
+});
+
+const upload = multer( { storage: fileStorageEngine })
 
 /**
  * @swagger
@@ -79,9 +95,10 @@ router.get("/vehiculos", getVehicles);
   router.get("/vehiculos/userId=:userId&vehCode=:vehCode", doesAssignmentExist);
 
 
+router.post('/saveimages', upload.array("images", 3), saveImages)
 
 
-
+router.post('/images', saveImages2);
 /**
  * @swagger
  * /tasks:

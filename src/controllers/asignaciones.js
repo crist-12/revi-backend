@@ -1,4 +1,8 @@
 import { connectrvfleet, connectrvseguridad } from "../database";
+import Client from "ftp";
+
+
+const c = new Client();
 
 export const getVehicles = async (req, res) => {
   const connection = await connectrvfleet();
@@ -59,15 +63,53 @@ export const getGroupsAndOptions = async(req, res) => {
     arre.push(obj);
     
   })
-
-
   arre.forEach(item => {
     console.log(item.opciones)
   })
   res.json(arre);
 }
 
+export const saveImages = async(req, res) => {
+  try {
+  c.on('ready', function() {
 
+    req.files.forEach((item)=> {
+      console.log(item.path);
+      c.put(item.path, '/Asignaciones/'+item.filename, function(err, list){
+        if(err) throw err;
+        c.end();
+    })
+    })
+/*     c.list(function(err, list) {
+        if (err) throw err;
+        console.dir(list);
+       // c.end();
+      }); */
+  });
+
+c.connect({
+    host: "192.168.1.2",
+    user: "RV-USUARIO",
+    password: "P@ssw0rd"
+});  
+
+  //console.log(req.files)
+
+
+
+    res.send({message: "Archivos subidos exitosamente"});
+  } catch (error) {
+    res.send({message: "Ocurrió un error al subir los archivos"})
+  }
+}
+
+export const saveImages2 = async(req, res) => {
+  try {
+   console.log(req.body);
+  } catch (error) {
+    
+  }
+}
 
 export const saveTask = async (req, res) => {
   try {
