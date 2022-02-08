@@ -95,7 +95,7 @@ router.get("/vehiculos", getVehicles);
   router.get("/vehiculos/userId=:userId&vehCode=:vehCode", doesAssignmentExist);
 
 
-router.post('/saveimages', upload.array("images", 3), saveImages)
+router.post('/saveimages', saveImages)
 
 
 router.post('/images', saveImages2);

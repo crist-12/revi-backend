@@ -1,5 +1,8 @@
 import { connectrvfleet, connectrvseguridad } from "../database";
 import Client from "ftp";
+import fs from 'fs'
+const base64Img = require("base64-img")
+
 
 
 const c = new Client();
@@ -73,18 +76,16 @@ export const saveImages = async(req, res) => {
   try {
   c.on('ready', function() {
 
-    req.files.forEach((item)=> {
-      console.log(item.path);
-      c.put(item.path, '/Asignaciones/'+item.filename, function(err, list){
+    req.body.forEach((item, index) => {
+      const destpath = 'temp/'
+      const filename = "IMG"+Date.now()+ "-"+Math.random()+".jpg";
+      const buffer = Buffer.from(req.body[index], "base64");
+      fs.writeFileSync(destpath+filename, buffer)
+      c.put(destpath+filename, '/Asignaciones/'+filename, function(err, list){
         if(err) throw err;
         c.end();
     })
     })
-/*     c.list(function(err, list) {
-        if (err) throw err;
-        console.dir(list);
-       // c.end();
-      }); */
   });
 
 c.connect({
@@ -105,9 +106,15 @@ c.connect({
 
 export const saveImages2 = async(req, res) => {
   try {
-   console.log(req.body);
+   req.body.forEach((item, index) => {
+     const destpath = 'temp/'
+     const filename = "IMG"+Date.now()+ "-"+Math.random()+".jpg";
+     const buffer = Buffer.from(req.body[index], "base64");
+     fs.writeFileSync(destpath+filename, buffer)
+   })
+  // console.log(req.body);
   } catch (error) {
-    
+    console.log(error)
   }
 }
 
