@@ -92,7 +92,7 @@ router.get("/vehiculos", getVehicles);
  *    description: Obtiene un listado de los vehiculos registrados en la base de datos
  *    tags: [Vehiculos]
  */
-  router.get("/vehiculos/userId=:userId&vehCode=:vehCode", doesAssignmentExist);
+router.get("/vehiculos/userId=:userId&vehCode=:vehCode", doesAssignmentExist);
 
 
 router.post('/saveimages', saveImages)

@@ -15,7 +15,7 @@ export const getVehicles = async (req, res) => {
 
 };
 
-export const getVehicleById= async (req, res) => {
+export const getVehicleById = async (req, res) => {
   const connection = await connectrvfleet();
   const rows = await connection.execute("SELECT VehCodigoVehiculo, VehPlaca, VehAno, VehMarca, VehColor, VehModelo, VehTipoCombustible, VehKilometraje FROM vehiculos WHERE VehCodigoVehiculo = ?", [
     req.params.id,
@@ -57,21 +57,21 @@ export const doesAssignmentExist = async (req, res) => {
   res.json(rows);
 };
 
-export const getGroupsAndOptions = async(req, res) => {
+export const getGroupsAndOptions = async (req, res) => {
   let arre = []
   const connection = await connectrvseguridad();
   const [groups] = await connection.execute("SELECT IdGrupoRecurso FROM gruporecurso WHERE IdGrupoRecurso IN ('ASI_DET_EXTERIOR', 'ASI_DET_INTERIOR', 'ASI_DET_MOTOR', 'ASI_DET_CARROCERIA') AND Estatus = 1");
   const [rows] = await connection.execute("SELECT A.IdGrupoRecurso, B.IdOpcionRecurso, A.NombreGrupoRecurso,  B.NombreOpcionRecurso FROM gruporecurso AS A JOIN opcionrecurso AS B ON A.IdGrupoRecurso = B.IdGrupoRecurso WHERE B.IdGrupoRecurso IN ('ASI_DET_EXTERIOR', 'ASI_DET_INTERIOR', 'ASI_DET_MOTOR', 'ASI_DET_CARROCERIA') AND B.Estatus = 1 ORDER BY IdGrupoRecurso, CAST(IdOpcionRecurso AS SIGNED) ASC");
-  groups.forEach((element)=> {
+  groups.forEach((element) => {
     var obj = {
-      IdGrupoRecurso : "",
+      IdGrupoRecurso: "",
       opciones: []
     }
     obj.IdGrupoRecurso = element.IdGrupoRecurso;
     obj.opciones = rows.filter(x => x.IdGrupoRecurso == element.IdGrupoRecurso)
-   // console.log(obj.opciones)
+    // console.log(obj.opciones)
     arre.push(obj);
-    
+
   })
   arre.forEach(item => {
     console.log(item.opciones)
@@ -80,44 +80,50 @@ export const getGroupsAndOptions = async(req, res) => {
   res.json(arre);
 }
 
-export const saveImages = async(req, res) => {
+export const saveImages = async (req, res) => {
   try {
-  c.on('ready', function() {
+    const connection = await connectrvfleet();
+    c.on('ready', function () {
 
-    req.body.forEach((item, index) => {
-      const destpath = 'temp/'
-      const filename = "IMG"+Date.now()+ "-"+Math.random()+".jpg";
-      const buffer = Buffer.from(req.body[index], "base64");
-      fs.writeFileSync(destpath+filename, buffer)
-      c.put(destpath+filename, '/Asignaciones/'+filename, function(err, list){
-        if(err) throw err;
-        c.end();
-    })
-    })
-  });
+      req.body.forEach((item, index) => {
+        const destpath = 'temp/'
+        const filename = "IMG" + Date.now() + "-" + Math.random() + ".jpg";
+        const buffer = Buffer.from(req.body[index], "base64");
+        fs.writeFileSync(destpath + filename, buffer)
+        c.put(destpath + filename, '/Asignaciones/' + filename, function (err, list) {
+          if (err) throw err;
+          
+          c.end();
+        })
+      })
+    });
 
-c.connect({
-    host: "192.168.1.2",
-    user: "RV-USUARIO",
-    password: "P@ssw0rd"
-});  
+    c.connect({
+      host: "192.168.1.2",
+      user: "RV-USUARIO",
+      password: "P@ssw0rd"
+    });
 
- 
-    res.send({message: "Archivos subidos exitosamente"});
+
+    res.send({ message: "Archivos subidos exitosamente" });
   } catch (error) {
-    res.send({message: "Ocurrió un error al subir los archivos"})
+    res.send({ message: "Ocurrió un error al subir los archivos" })
   }
 }
 
-export const saveImages2 = async(req, res) => {
+export const registerImages = async (req, res) => {
+
+}
+
+export const saveImages2 = async (req, res) => {
   try {
-   req.body.forEach((item, index) => {
-     const destpath = 'temp/'
-     const filename = "IMG"+Date.now()+ "-"+Math.random()+".jpg";
-     const buffer = Buffer.from(req.body[index], "base64");
-     fs.writeFileSync(destpath+filename, buffer)
-   })
-  // console.log(req.body);
+    req.body.forEach((item, index) => {
+      const destpath = 'temp/'
+      const filename = "IMG" + Date.now() + "-" + Math.random() + ".jpg";
+      const buffer = Buffer.from(req.body[index], "base64");
+      fs.writeFileSync(destpath + filename, buffer)
+    })
+    // console.log(req.body);
   } catch (error) {
     console.log(error)
   }
@@ -141,7 +147,21 @@ export const saveTask = async (req, res) => {
   }
 };
 
-export const saveAssignment = async(req, res) => {
+export const saveDetails = async(req, res) => {
+  try {
+    const connection = await connectrvfleet();
+    const [results] = await connection.execute(
+      "INSERT INTO asignacionvehiculorespuestadetalle(IdAsignacion, CodigoGrupoRecurso, CodigoOpcionRecurso, Respuesta) VALUES (?, ?, ?, ?)",
+      [req.body.IdAsignacion, req.body.CodigoGrupoRecurso, CodigoOpcionRecurso, Respuesta]
+    )
+    res.json(results)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
+export const saveAssignment = async (req, res) => {
   try {
     const connection = await connectrvfleet();
     const [results] = await connection.execute(
@@ -153,11 +173,14 @@ export const saveAssignment = async(req, res) => {
       id: results.insertId,
       ...req.body,
     };
-    res.json(newUser);
+    connection.end();
+    res.json(results)
   } catch (error) {
     console.error(error);
   }
 }
+
+
 
 export const getTask = async (req, res) => {
   const connection = await connect();
