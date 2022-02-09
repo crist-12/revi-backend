@@ -10,7 +10,9 @@ const c = new Client();
 export const getVehicles = async (req, res) => {
   const connection = await connectrvfleet();
   const [rows] = await connection.execute("SELECT VehCodigoVehiculo AS 'key', VehPlaca AS 'label', VehAno, VehMarca, VehColor, VehModelo, VehTipoCombustible, VehKilometraje FROM vehiculos");
+  await connection.end();
   res.json(rows);
+
 };
 
 export const getVehicleById= async (req, res) => {
@@ -18,18 +20,21 @@ export const getVehicleById= async (req, res) => {
   const rows = await connection.execute("SELECT VehCodigoVehiculo, VehPlaca, VehAno, VehMarca, VehColor, VehModelo, VehTipoCombustible, VehKilometraje FROM vehiculos WHERE VehCodigoVehiculo = ?", [
     req.params.id,
   ]);
+  await connection.end();
   res.json(rows[0]);
 };
 
 export const getAllUsers = async (req, res) => {
   const connection = await connectrvseguridad();
   const [rows] = await connection.execute("SELECT A.IdUsuario AS 'key', A.NombreUsuario AS 'label', B.NombreUbicacion FROM usuario AS A JOIN ubicacion AS B ON A.IdUbicacion = B.IdUbicacion");
+  await connection.end();
   res.json(rows);
 };
 
 export const getAllDetails = async (req, res) => {
   const connection = await connectrvseguridad();
   const [rows] = await connection.execute("SELECT * FROM gruporecurso AS A JOIN opcionrecurso AS B ON A.IdGrupoRecurso = B.IdGrupoRecurso WHERE A.Estatus = 1 AND B.Estatus = 1");
+  await connection.end();
   res.json(rows);
 };
 
@@ -38,6 +43,7 @@ export const getConductor = async (req, res) => {
   const rows = await connection.execute("SELECT A.IdUsuario, A.NombreUsuario, b.NombreUbicacion FROM usuario AS A JOIN ubicacion AS B ON A.IdUbicacion = B.IdUbicacion WHERE A.IdUsuario = ?", [
     req.params.id,
   ]);
+  await connection.end();
   res.json(rows[0]);
 };
 
@@ -47,6 +53,7 @@ export const doesAssignmentExist = async (req, res) => {
     req.params.userId,
     req.params.vehCode
   ]);
+  await connection.end();
   res.json(rows);
 };
 
@@ -69,6 +76,7 @@ export const getGroupsAndOptions = async(req, res) => {
   arre.forEach(item => {
     console.log(item.opciones)
   })
+  await connection.end();
   res.json(arre);
 }
 
@@ -94,10 +102,7 @@ c.connect({
     password: "P@ssw0rd"
 });  
 
-  //console.log(req.files)
-
-
-
+ 
     res.send({message: "Archivos subidos exitosamente"});
   } catch (error) {
     res.send({message: "Ocurrió un error al subir los archivos"})
