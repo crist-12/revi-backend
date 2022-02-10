@@ -1,4 +1,4 @@
-@api = http://localhost:3000/saveimages2
+@api = http://localhost:3000/details
 
 ### Get all tasks
 {{api}}
@@ -8,11 +8,10 @@ POST {{api}}
 Content-Type: application/json
 
 {
-  [
-    [1],
-        [2]
-            [3]
-  ]
+ "IdAsignacion" : 1,
+ "CodigoGrupoRecurso": "ASI_DET_EXAMPLE",
+ "CodigoOpcionRecurso" : 1,
+ "Respuesta" : "BUENO"
 }
 
 ### get a single task

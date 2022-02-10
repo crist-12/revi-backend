@@ -13,7 +13,8 @@ import {
   getAllDetails,
   getConductor,
   saveImages,
-  saveImages2
+  saveImages2,
+  saveDetails
 } from "../controllers/asignaciones";
 import multer from "multer";
 
@@ -95,7 +96,7 @@ router.get("/vehiculos", getVehicles);
 router.get("/vehiculos/userId=:userId&vehCode=:vehCode", doesAssignmentExist);
 
 
-router.post('/saveimages', saveImages)
+router.post('/saveimages/id=:id', saveImages)
 
 
 router.post('/images', saveImages2);
@@ -144,6 +145,16 @@ router.post("/tasks", saveTask);
  *    tags: [Tasks]
  */
  router.post("/assignment", saveAssignment);
+
+
+ /**
+ * @swagger
+ * /tasks:
+ *  post:
+ *    summary: save a new Task
+ *    tags: [Tasks]
+ */
+  router.post("/details", saveDetails);
 
 /**
  * @swagger

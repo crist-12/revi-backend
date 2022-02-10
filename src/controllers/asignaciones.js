@@ -82,19 +82,44 @@ export const getGroupsAndOptions = async (req, res) => {
 
 export const saveImages = async (req, res) => {
   try {
+    const types = ['DELANTERA', 'TRASERA', 'LAT-IZQ', 'LAT-DER', 'INTERIOR', 'OBS']
     const connection = await connectrvfleet();
     c.on('ready', function () {
 
       req.body.forEach((item, index) => {
-        const destpath = 'temp/'
-        const filename = "IMG" + Date.now() + "-" + Math.random() + ".jpg";
-        const buffer = Buffer.from(req.body[index], "base64");
-        fs.writeFileSync(destpath + filename, buffer)
-        c.put(destpath + filename, '/Asignaciones/' + filename, function (err, list) {
-          if (err) throw err;
-          
-          c.end();
-        })
+        if (index == 5) {
+          item.forEach((img, indice) => {
+            const destpath = 'temp/'
+            const filename = types[index] + "-IMG-" + Date.now() + ".jpg";
+            const buffer = Buffer.from(img, "base64");
+            let localpath = destpath + filename
+            fs.writeFileSync(destpath + filename, buffer)
+
+            c.put(destpath + filename, '/Asignaciones/' + filename, function (err, list) {
+              if (err) console.log(err);
+              let path = '/Asignaciones/' + filename;
+
+              let result = connection.execute("INSERT INTO asignacionvehiculofotos(CodAsignacion, TipoFoto, PathFoto) VALUES (?, ?, ?)", [req.params.id, types[index], path])
+              fs.unlinkSync(localpath)
+              c.end();
+            })
+          })
+        } else {
+          const destpath = 'temp/'
+          const filename = types[index] + "-IMG-" + Date.now() + ".jpg";
+          const buffer = Buffer.from(req.body[index], "base64");
+          let localpath = destpath + filename
+          fs.writeFileSync(destpath + filename, buffer)
+
+          c.put(destpath + filename, '/Asignaciones/' + filename, function (err, list) {
+            if (err) console.log(err);
+            let path = '/Asignaciones/' + filename;
+
+            let result = connection.execute("INSERT INTO asignacionvehiculofotos(CodAsignacion, TipoFoto, PathFoto) VALUES (?, ?, ?)", [req.params.id, types[index], path])
+            fs.unlinkSync(localpath)
+            c.end();
+          })
+        }
       })
     });
 
@@ -147,12 +172,12 @@ export const saveTask = async (req, res) => {
   }
 };
 
-export const saveDetails = async(req, res) => {
+export const saveDetails = async (req, res) => {
   try {
     const connection = await connectrvfleet();
     const [results] = await connection.execute(
       "INSERT INTO asignacionvehiculorespuestadetalle(IdAsignacion, CodigoGrupoRecurso, CodigoOpcionRecurso, Respuesta) VALUES (?, ?, ?, ?)",
-      [req.body.IdAsignacion, req.body.CodigoGrupoRecurso, CodigoOpcionRecurso, Respuesta]
+      [req.body.IdAsignacion, req.body.CodigoGrupoRecurso, req.body.CodigoOpcionRecurso, req.body.Respuesta]
     )
     res.json(results)
   } catch (error) {
