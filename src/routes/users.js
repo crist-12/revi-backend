@@ -1,11 +1,7 @@
 import { Router } from "express";
 import {
-  deleteTask,
   getVehicles,
   saveAssignment,
-  saveTask,
-  getTask,
-  updateTask,
   doesAssignmentExist,
   getGroupsAndOptions,
   getVehicleById,
@@ -13,7 +9,6 @@ import {
   getAllDetails,
   getConductor,
   saveImages,
-  saveImages2,
   saveDetails
 } from "../controllers/asignaciones";
 import multer from "multer";
@@ -37,21 +32,48 @@ const upload = multer( { storage: fileStorageEngine })
  * @swagger
  * components:
  *  schemas:
- *    Task:
+ *    Vehicle:
  *      type: object
  *      properties:
- *        id:
+ *        key:
  *          type: string
- *          description: the auto-generated id of task
- *        title:
+ *          description: Código del Vehículo
+ *        label:
  *          type: string
- *          description: the task title
- *        description:
+ *          description: Placa del Vehículo
+ *        VehAno:
+ *          type: int
+ *          description: Año del vehículo
+ *        VehMarca:
  *          type: string
- *          description: the task description
+ *          description: Marca del Vehículo
+ *        VehColor:
+ *          type: string
+ *          description: Color del vehículo
+ *        VehModelo:
+ *          type: string
+ *          description: Modelo del vehículo
+ *        VehTipoCombustible:
+ *          type: string
+ *          description: Tipo de combustible del vehículo
+ *        VehKilometraje:
+ *          type: int
+ *          description: Kilometraje del vehículo hasta la última actualización
+ *    Conductores:
+ *      type: object
+ *      properties: 
+ *        key:
+ *          type: string
+ *          description: Nombre completo del conductor
+ *        label:
+ *          type: string
+ *          description: Código del conductor
+ *        NombreUbicacion:
+ *          type: string
+ *          description: Ubicación del conductor
  * tags:
- *  name: Tasks
- *  description: tasks endpoint
+ *  name: Vehiculos
+ *  description: API - Vehículos
  */
 
 /**
@@ -66,19 +88,25 @@ router.get("/vehiculos", getVehicles);
 
 /**
  * @swagger
- * /vehiculos:
+ * /groups:
  *  get:
- *    summary: Obtiene los registros de todos los vehículos
- *    description: Obtiene un listado de los vehiculos registrados en la base de datos
+ *    summary: Obtiene los registros de todos los grupos y opciones de respuesta.
+ *    description: Al evaluar el vehículo, lo evaluamos en varios aspectos como el Interior, Exterior, Motor y Carrocería, esta API trae los items a evaluar por cada uno de los aspectos.
  *    tags: [Vehiculos]
  */
  router.get("/groups", getGroupsAndOptions);
 
 /**
  * @swagger
- * /vehiculos:
+ * /vehiculos/id={id}:
  *  get:
  *    summary: Obtiene los registros de todos los vehículos
+ *    parameters:
+ *      - in: query
+ *        name: id
+ *        type: integer
+ *        required: true
+ *        description: Id del vehículo
  *    description: Obtiene un listado de los vehiculos registrados en la base de datos
  *    tags: [Vehiculos]
  */
@@ -87,34 +115,59 @@ router.get("/vehiculos", getVehicles);
 
  /**
  * @swagger
- * /vehiculos:
+ * /vehiculos/userId={userId}&vehCode={vehCode}:
  *  get:
  *    summary: Obtiene los registros de todos los vehículos
- *    description: Obtiene un listado de los vehiculos registrados en la base de datos
+ *    parameters:
+ *      - in: query
+ *        name: userId
+ *        type: integer
+ *        required: true
+ *        description: Id del usuario
+ *      - in: query
+ *        name: vehCode
+ *        type: integer
+ *        required: true
+ *        description: Código del vehículo
+ *    description: Corrobora si la asignación que quiere hacer ya existe
  *    tags: [Vehiculos]
  */
 router.get("/vehiculos/userId=:userId&vehCode=:vehCode", doesAssignmentExist);
 
-
+ /**
+ * @swagger
+ * /saveimages/id={id}:
+ *  post:
+ *    summary: Guarda en la base de datos las imágenes
+ *    consumes:
+ *      - application/json
+ *    parameters:
+ *      - in: formData
+ *        name: images
+ *        type: array
+ *        required: true
+ *        description: Imágenes procesadas en base64  
+ *    description: Toma las imágenes encodificadas en base64, las convierte en archivos reales jpg almacenadas en una carpeta TEMP, de forma asíncrona sube las imágenes al cliente FTP para luego eliminar las imágenes de nuestra carpeta TEMP.
+ *    tags: [Imágenes]
+ */
 router.post('/saveimages/id=:id', saveImages)
 
 
-router.post('/images', saveImages2);
 /**
  * @swagger
- * /tasks:
+ * /users:
  *  get:
- *    summary: Get all Tasks
- *    tags: [Tasks]
+ *    summary: Obtiene el listado de todos los usuarios registrados en el sistema
+ *    tags: [Conductores]
  */
  router.get("/users", getAllUsers);
 
  /**
  * @swagger
- * /tasks:
+ * /details:
  *  get:
- *    summary: Get all Tasks
- *    tags: [Tasks]
+ *    summary: Obtiene todos los items que vamos a evaluar de los vehículos
+ *    tags: [Grupos y Recursos]
  */
   router.get("/details", getAllDetails);
 
@@ -123,64 +176,85 @@ router.post('/images', saveImages2);
  * /users/{id}:
  *  get:
  *    summary: Seleccionar los datos de un determinado usuario
- *    tags: [Tasks]
+ *    tags: [Conductores]
  */
  router.get("/users/id=:id", getConductor);
 
 
-/**
- * @swagger
- * /tasks:
- *  post:
- *    summary: save a new Task
- *    tags: [Tasks]
- */
-router.post("/tasks", saveTask);
 
 /**
  * @swagger
- * /tasks:
+ * /assignment:
  *  post:
- *    summary: save a new Task
- *    tags: [Tasks]
+ *    summary: Guarda los datos de la asignación en el sistema
+ *    tags: [Asignación]
+ *    consumes:
+ *      - application/json
+ *    parameters:
+ *      - in: formData
+ *        name: CodigoUsuario
+ *        type: string
+ *        required: true
+ *        description: Código del conductor
+ *      - in: formData
+ *        name: CodigoVehiculo
+ *        type: int
+ *        required: true
+ *        description: Código del vehículo
+ *      - in: formData
+ *        name: KilometrajeRecibido
+ *        type: int
+ *        required: true
+ *        description: Kilometraje del automóvil a la hora de hacer la asignación
+ *      - in: formData
+ *        name: ProximoCambio
+ *        type: string
+ *        required: true
+ *        description: Fecha o descripción del próximo cambio de aceite
+ *      - in: formData
+ *        name: TanqueCombustible
+ *        schema:
+ *          type: string
+ *          enum: [E, 1/4, 1/2, 3/4, F]
+ *        required: true
+ *        description: Estado en el que recibe el tanque de combustible
  */
  router.post("/assignment", saveAssignment);
 
 
  /**
  * @swagger
- * /tasks:
+ * /details:
  *  post:
  *    summary: save a new Task
- *    tags: [Tasks]
+ *    tags: [Asignación]
+ *    consumes:
+ *      - application/json
+ *    parameters:
+ *      - in: formData
+ *        name: IdAsignacion
+ *        type: int
+ *        required: true
+ *        description: Código de la Asignación, generada por la API /assignment
+ *      - in: formData
+ *        name: CodigoGrupoRecurso
+ *        type: string
+ *        required: true
+ *        description: Código del grupo de recursos, representa el aspecto a evaluar (INT, EXT, MTR, CAR)
+ *      - in: formData
+ *        name: CodigoOpcionRecurso
+ *        type: int
+ *        required: true
+ *        description: Código del item específico a evaluar por cada uno de los grupos disponibles
+ *      - in: formData
+ *        name: Respuesta
+ *        schema:
+ *          type: string
+ *          enum: [MALO, REGULAR, EXCELENTE]
+ *        required: true
+ *        description: Evaluación del item a evaluar
  */
   router.post("/details", saveDetails);
 
-/**
- * @swagger
- * /tasks/{id}:
- *  get:
- *    summary: Get task by Id
- *    tags: [Tasks]
- */
-router.get("/tasks/:id", getTask);
-
-/**
- * @swagger
- * /tasks/{id}:
- *  delete:
- *    summary: delete a task by Id
- *    tags: [Tasks]
- */
-router.delete("/tasks/:id", deleteTask);
-
-/**
- * @swagger
- * /tasks/{id}:
- *  put:
- *    summary: update a task by Id
- *    tags: [Tasks]
- */
-router.put("/tasks/:id", updateTask);
 
 export default router;

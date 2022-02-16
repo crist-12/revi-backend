@@ -1,6 +1,7 @@
 import { connectrvfleet, connectrvseguridad } from "../database";
 import Client from "ftp";
 import fs from 'fs'
+import fs2 from 'fs-extra'
 const base64Img = require("base64-img")
 
 
@@ -116,8 +117,20 @@ export const saveImages = async (req, res) => {
             let path = '/Asignaciones/' + filename;
 
             let result = connection.execute("INSERT INTO asignacionvehiculofotos(CodAsignacion, TipoFoto, PathFoto) VALUES (?, ?, ?)", [req.params.id, types[index], path])
-            fs.unlinkSync(localpath)
+            /* try {
+              fs.unlinkSync(localpath)
+            } catch (error) {
+              console.log("Algo salió mal al eliminar el archivo "+localpath)
+            } */
             c.end();
+          })
+
+          fs2.emptyDir('temp')
+          .then((res)=> {
+            console.log("Archivos eliminados exitosamente")
+          })
+          .catch((err)=> {
+            console.log("Algo ocurrió mientras eliminabamos los archivos")
           })
         }
       })
@@ -136,42 +149,6 @@ export const saveImages = async (req, res) => {
   }
 }
 
-export const registerImages = async (req, res) => {
-
-}
-
-export const saveImages2 = async (req, res) => {
-  try {
-    req.body.forEach((item, index) => {
-      const destpath = 'temp/'
-      const filename = "IMG" + Date.now() + "-" + Math.random() + ".jpg";
-      const buffer = Buffer.from(req.body[index], "base64");
-      fs.writeFileSync(destpath + filename, buffer)
-    })
-    // console.log(req.body);
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-export const saveTask = async (req, res) => {
-  try {
-    const connection = await connect();
-    const [results] = await connection.execute(
-      "INSERT INTO tasks(title, description) VALUES (?, ?)",
-      [req.body.title, req.body.description]
-    );
-
-    const newUser = {
-      id: results.insertId,
-      ...req.body,
-    };
-    res.json(newUser);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 export const saveDetails = async (req, res) => {
   try {
     const connection = await connectrvfleet();
@@ -184,7 +161,6 @@ export const saveDetails = async (req, res) => {
     console.log(error)
   }
 }
-
 
 export const saveAssignment = async (req, res) => {
   try {
@@ -204,33 +180,4 @@ export const saveAssignment = async (req, res) => {
     console.error(error);
   }
 }
-
-
-
-export const getTask = async (req, res) => {
-  const connection = await connect();
-  const rows = await connection.execute("SELECT * FROM tasks WHERE id = ?", [
-    req.params.id,
-  ]);
-  res.json(rows[0][0]);
-};
-
-export const deleteTask = async (req, res) => {
-  const connection = await connect();
-  const result = await connection.execute("DELETE FROM tasks WHERE id = ?", [
-    req.params.id,
-  ]);
-  console.log(result);
-
-  res.sendStatus(204);
-};
-
-export const updateTask = async (req, res) => {
-  const connection = await connect();
-  await connection.query("UPDATE tasks SET ? WHERE id = ?", [
-    req.body,
-    req.params.id,
-  ]);
-  res.sendStatus(204);
-};
 
